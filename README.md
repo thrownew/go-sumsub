@@ -1,3 +1,11 @@
+[![Release](https://img.shields.io/github/release/thrownew/go-sumsub.svg)](https://github.com/thrownew/go-sumsub/releases/latest)
+[![License](https://img.shields.io/github/license/thrownew/go-sumsub.svg)](https://raw.githubusercontent.com/thrownew/go-sumsub/master/LICENSE)
+[![Godocs](https://img.shields.io/badge/godoc-reference-blue.svg)](https://godoc.org/github.com/thrownew/go-sumsub)
+
+[![Build Status](https://github.com/thrownew/go-sumsub/workflows/CI/badge.svg)](https://github.com/thrownew/go-sumsub/actions)
+[![codecov](https://codecov.io/gh/thrownew/go-sumsub/branch/master/graph/badge.svg)](https://codecov.io/gh/thrownew/go-sumsub)
+[![Go Report Card](https://goreportcard.com/badge/github.com/thrownew/go-sumsub)](https://goreportcard.com/report/github.com/thrownew/go-sumsub)
+
 # go-sumsub
 
 SumSub API client for Go.
