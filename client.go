@@ -68,6 +68,7 @@ func NewClient(token string, signer Signer, opts ...Opt) *Client {
 	return &Client{
 		host:   o.Host,
 		cli:    o.HTTPClient,
+		now:    o.NowFunc,
 		token:  token,
 		signer: signer,
 	}
@@ -119,7 +120,115 @@ type (
 	}
 
 	GenerateExternalWebSDKLinkResponse struct {
-		Link string
+		URL string
+	}
+
+	ApplicantReviewStatusRequest struct {
+		ApplicantID string
+	}
+
+	ApplicantReviewStatusResponse struct {
+		ReviewID            string
+		AttemptID           string
+		AttemptCnt          int
+		ElapsedSincePending time.Duration
+		ElapsedSinceQueued  time.Duration
+		Reprocessing        bool
+		CreateDate          time.Time
+		ReviewDate          time.Time
+		ReviewResult        ReviewResult
+		ReviewStatus        string
+		Priority            int
+	}
+
+	ReviewResult struct {
+		ModerationComment string
+		ClientComment     string
+		ReviewAnswer      string
+		RejectLabels      []string
+		ReviewRejectType  string
+	}
+
+	ApplicantDataRequest struct {
+		ApplicantID    string
+		ExternalUserID string
+	}
+
+	ApplicantDataResponse struct {
+		ID                string
+		CreatedAt         time.Time
+		CreatedBy         string
+		Key               string
+		ClientID          string
+		InspectionID      string
+		ExternalUserID    string
+		FixedInfo         FixedInfo
+		Info              Info
+		Email             string
+		ApplicantPlatform string
+		Agreement         Agreement
+		Review            Review
+		RequiredIDDocs    RequiredIDDocs
+		Lang              string
+		Type              string
+	}
+
+	FixedInfo struct {
+		FirstName string
+		LastName  string
+	}
+
+	Info struct {
+		FirstName   string
+		FirstNameEn string
+		LastName    string
+		LastNameEn  string
+		DOB         time.Time
+		Country     string
+		IDDocs      []IDDoc
+	}
+
+	IDDoc struct {
+		IDDocType   string
+		Country     string
+		FirstName   string
+		FirstNameEn string
+		LastName    string
+		LastNameEn  string
+		ValidUntil  time.Time
+		Number      string
+		DOB         time.Time
+		MRZLine1    string
+		MRZLine2    string
+		MRZLine3    string
+	}
+
+	Agreement struct {
+		CreatedAt  time.Time
+		AcceptedAt time.Time
+		Source     string
+		RecordIDs  []string
+	}
+
+	Review struct {
+		ReviewID           string
+		AttemptID          string
+		AttemptCnt         int
+		LevelName          string
+		LevelAutoCheckMode string
+		CreateDate         time.Time
+		ReviewStatus       string
+		Priority           int
+	}
+
+	RequiredIDDocs struct {
+		DocSets DocSets
+	}
+
+	DocSets []DocSet
+
+	DocSet struct {
+		IDDocSetType string
 	}
 )
 
@@ -130,6 +239,10 @@ type (
 		CorrelationID string `json:"correlationId"`
 		ErrorCode     int    `json:"errorCode"`
 		ErrorName     string `json:"errorName"`
+	}
+
+	respTime struct {
+		time.Time
 	}
 
 	reqHealth struct {
@@ -153,9 +266,115 @@ type (
 	}
 
 	respGenerateExternalWebSDKLink struct {
-		Link string `json:"link"`
+		URL string `json:"url"`
+	}
+
+	reqApplicantReviewStatus struct {
+	}
+
+	respApplicantReviewStatus struct {
+		ReviewID            string   `json:"reviewId"`
+		AttemptID           string   `json:"attemptId"`
+		AttemptCnt          int      `json:"attemptCnt"`
+		ElapsedSincePending int64    `json:"elapsedSincePendingMs"`
+		ElapsedSinceQueued  int64    `json:"elapsedSinceQueuedMs"`
+		Reprocessing        bool     `json:"reprocessing"`
+		CreateDate          respTime `json:"createDate"`
+		ReviewDate          respTime `json:"reviewDate"`
+		ReviewResult        struct {
+			ModerationComment string   `json:"moderationComment"`
+			ClientComment     string   `json:"clientComment"`
+			ReviewAnswer      string   `json:"reviewAnswer"`
+			RejectLabels      []string `json:"rejectLabels"`
+			ReviewRejectType  string   `json:"reviewRejectType"`
+		} `json:"reviewResult"`
+		ReviewStatus string `json:"reviewStatus"`
+		Priority     int    `json:"priority"`
+	}
+
+	reqApplicantData struct {
+	}
+
+	respApplicantData struct {
+		ID             string   `json:"id"`
+		CreatedAt      respTime `json:"createdAt"`
+		CreatedBy      string   `json:"createdBy"`
+		Key            string   `json:"key"`
+		ClientID       string   `json:"clientId"`
+		InspectionID   string   `json:"inspectionId"`
+		ExternalUserID string   `json:"externalUserId"`
+		FixedInfo      struct {
+			FirstName string `json:"firstName"`
+			LastName  string `json:"lastName"`
+		}
+		Info struct {
+			FirstName   string   `json:"firstName"`
+			FirstNameEn string   `json:"firstNameEn"`
+			LastName    string   `json:"lastName"`
+			LastNameEn  string   `json:"lastNameEn"`
+			DOB         respTime `json:"dob"`
+			Country     string   `json:"country"`
+			IDDocs      []struct {
+				IDDocType   string   `json:"idDocType"`
+				Country     string   `json:"country"`
+				FirstName   string   `json:"firstName"`
+				FirstNameEn string   `json:"firstNameEn"`
+				LastName    string   `json:"lastName"`
+				LastNameEn  string   `json:"lastNameEn"`
+				ValidUntil  respTime `json:"validUntil"`
+				Number      string   `json:"number"`
+				DOB         respTime `json:"dob"`
+				MRZLine1    string   `json:"mrzLine1"`
+				MRZLine2    string   `json:"mrzLine2"`
+				MRZLine3    string   `json:"mrzLine3"`
+			}
+		}
+		Email             string `json:"email"`
+		ApplicantPlatform string `json:"applicantPlatform"`
+		Agreement         struct {
+			CreatedAt  respTime `json:"createdAt"`
+			AcceptedAt respTime `json:"acceptedAt"`
+			Source     string   `json:"source"`
+			RecordIDs  []string `json:"recordIds"`
+		} `json:"agreement"`
+		RequiredIDDocs struct {
+			DocSets []struct {
+				IDDocSetType string `json:"idDocSetType"`
+			} `json:"docSets"`
+		}
+		Review struct {
+			ReviewID           string   `json:"reviewId"`
+			AttemptID          string   `json:"attemptId"`
+			AttemptCnt         int      `json:"attemptCnt"`
+			LevelName          string   `json:"levelName"`
+			LevelAutoCheckMode string   `json:"levelAutoCheckMode"`
+			CreateDate         respTime `json:"createDate"`
+			ReviewStatus       string   `json:"reviewStatus"`
+			Priority           int      `json:"priority"`
+		} `json:"review"`
+		Lang string `json:"lang"`
+		Type string `json:"type"`
 	}
 )
+
+func (t *respTime) UnmarshalJSON(b []byte) error {
+	if len(b) < 2 || b[0] != '"' || b[len(b)-1] != '"' {
+		return fmt.Errorf("invalid time format")
+	}
+	str := string(b[1 : len(b)-1])
+	var err error
+	// try to parse time with different layouts
+	for _, layout := range []string{"2006-01-02", "2006-01-02 15:04:05", "2006-01-02 15:04:05-0700"} {
+		t.Time, err = time.Parse(layout, str)
+		if err == nil {
+			break
+		}
+	}
+	if err != nil {
+		return fmt.Errorf("parse time: undefined layout: %s", str)
+	}
+	return nil
+}
 
 // GenerateAccessTokenSDK Use this method to generate a new access token for SDK
 // https://docs.sumsub.com/reference/generate-access-token
@@ -205,13 +424,151 @@ func (c *Client) GenerateExternalWebSDKLink(ctx context.Context, req GenerateExt
 	}
 
 	// answer validation
-	if _, err = url.Parse(resp.Link); err != nil {
+	if _, err = url.Parse(resp.URL); err != nil {
 		return GenerateExternalWebSDKLinkResponse{}, fmt.Errorf("invalid link: %w", err)
 	}
 
 	//nolint: gosimple
 	return GenerateExternalWebSDKLinkResponse{
-		Link: resp.Link,
+		URL: resp.URL,
+	}, nil
+}
+
+// ApplicantReviewStatus Use this method when utilizing the WebSDK or MobileSDK to get the review status. Both SDKs will show the rejection reasons and associated moderation comments.
+// https://docs.sumsub.com/reference/get-applicant-review-status
+func (c *Client) ApplicantReviewStatus(ctx context.Context, req ApplicantReviewStatusRequest) (ApplicantReviewStatusResponse, error) {
+	resp, err := call[reqApplicantReviewStatus, respApplicantReviewStatus](ctx, c,
+		http.MethodGet,
+		fmt.Sprintf("/resources/applicants/%s/status", url.PathEscape(req.ApplicantID)),
+		reqApplicantReviewStatus{},
+	)
+	if err != nil {
+		return ApplicantReviewStatusResponse{}, fmt.Errorf("call: %w", err)
+	}
+
+	return ApplicantReviewStatusResponse{
+		ReviewID:            resp.ReviewID,
+		AttemptID:           resp.AttemptID,
+		AttemptCnt:          resp.AttemptCnt,
+		ElapsedSincePending: time.Duration(resp.ElapsedSincePending) * time.Millisecond,
+		ElapsedSinceQueued:  time.Duration(resp.ElapsedSinceQueued) * time.Millisecond,
+		Reprocessing:        resp.Reprocessing,
+		CreateDate:          resp.CreateDate.Time,
+		ReviewDate:          resp.ReviewDate.Time,
+		ReviewResult: ReviewResult{
+			ModerationComment: resp.ReviewResult.ModerationComment,
+			ClientComment:     resp.ReviewResult.ClientComment,
+			ReviewAnswer:      resp.ReviewResult.ReviewAnswer,
+			RejectLabels:      resp.ReviewResult.RejectLabels,
+			ReviewRejectType:  resp.ReviewResult.ReviewRejectType,
+		},
+		ReviewStatus: resp.ReviewStatus,
+		Priority:     resp.Priority,
+	}, nil
+}
+
+// ApplicantData Use this method in cases the applicant ID is not yet known to you. For example, when the WebSDK has created an applicant for you and we called your webhook endpoint.
+// https://docs.sumsub.com/reference/get-applicant-data
+// https://docs.sumsub.com/reference/get-applicant-data-via-externaluserid
+func (c *Client) ApplicantData(ctx context.Context, req ApplicantDataRequest) (ApplicantDataResponse, error) {
+	var uri string
+
+	switch {
+	case len(req.ApplicantID) > 0:
+		// https://docs.sumsub.com/reference/get-applicant-data
+		uri = fmt.Sprintf("/resources/applicants/%s/one", url.PathEscape(req.ApplicantID))
+	case len(req.ExternalUserID) > 0:
+		// https://docs.sumsub.com/reference/get-applicant-data-via-externaluserid
+		uri = fmt.Sprintf("/resources/applicants/-;externalUserId=%s/one", url.PathEscape(req.ExternalUserID))
+	default:
+		return ApplicantDataResponse{}, errors.New("applicant id or external user id required")
+	}
+
+	resp, err := call[reqApplicantData, respApplicantData](ctx, c,
+		http.MethodGet,
+		uri,
+		reqApplicantData{},
+	)
+	if err != nil {
+		return ApplicantDataResponse{}, fmt.Errorf("call: %w", err)
+	}
+
+	return ApplicantDataResponse{
+		ID:             resp.ID,
+		CreatedAt:      resp.CreatedAt.Time,
+		CreatedBy:      resp.CreatedBy,
+		Key:            resp.Key,
+		ClientID:       resp.ClientID,
+		InspectionID:   resp.InspectionID,
+		ExternalUserID: resp.ExternalUserID,
+		FixedInfo: FixedInfo{
+			FirstName: resp.FixedInfo.FirstName,
+			LastName:  resp.FixedInfo.LastName,
+		},
+		Info: Info{
+			FirstName:   resp.Info.FirstName,
+			FirstNameEn: resp.Info.FirstNameEn,
+			LastName:    resp.Info.LastName,
+			LastNameEn:  resp.Info.LastNameEn,
+			DOB:         resp.Info.DOB.Time,
+			Country:     resp.Info.Country,
+			IDDocs: func() []IDDoc {
+				var docs []IDDoc
+				for _, d := range resp.Info.IDDocs {
+					docs = append(docs, IDDoc{
+						IDDocType:   d.IDDocType,
+						Country:     d.Country,
+						FirstName:   d.FirstName,
+						FirstNameEn: d.FirstNameEn,
+						LastName:    d.LastName,
+						LastNameEn:  d.LastNameEn,
+						ValidUntil:  d.ValidUntil.Time,
+						Number:      d.Number,
+						DOB:         d.DOB.Time,
+						MRZLine1:    d.MRZLine1,
+						MRZLine2:    d.MRZLine2,
+						MRZLine3:    d.MRZLine3,
+					})
+				}
+				return docs
+			}(),
+		},
+		Email:             resp.Email,
+		ApplicantPlatform: resp.ApplicantPlatform,
+		Agreement: struct {
+			CreatedAt  time.Time
+			AcceptedAt time.Time
+			Source     string
+			RecordIDs  []string
+		}{
+			CreatedAt:  resp.Agreement.CreatedAt.Time,
+			AcceptedAt: resp.Agreement.AcceptedAt.Time,
+			Source:     resp.Agreement.Source,
+			RecordIDs:  resp.Agreement.RecordIDs,
+		},
+		RequiredIDDocs: RequiredIDDocs{
+			DocSets: func() DocSets {
+				var sets DocSets
+				for _, s := range resp.RequiredIDDocs.DocSets {
+					sets = append(sets, DocSet{
+						IDDocSetType: s.IDDocSetType,
+					})
+				}
+				return sets
+			}(),
+		},
+		Review: Review{
+			ReviewID:           resp.Review.ReviewID,
+			AttemptID:          resp.Review.AttemptID,
+			AttemptCnt:         resp.Review.AttemptCnt,
+			LevelName:          resp.Review.LevelName,
+			LevelAutoCheckMode: resp.Review.LevelAutoCheckMode,
+			CreateDate:         resp.Review.CreateDate.Time,
+			ReviewStatus:       resp.Review.ReviewStatus,
+			Priority:           resp.Review.Priority,
+		},
+		Lang: resp.Lang,
+		Type: resp.Type,
 	}, nil
 }
 
