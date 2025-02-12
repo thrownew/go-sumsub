@@ -25,6 +25,9 @@ go get github.com/thrownew/go-sumsub
 - [Health check](https://docs.sumsub.com/reference/review-api-health)
 - [Generate SDK access token](https://docs.sumsub.com/reference/generate-access-token)
 - [Generate external WebSDK link](https://docs.sumsub.com/reference/generate-websdk-external-link)
+- [Get applicant review status](https://docs.sumsub.com/reference/get-applicant-review-status)
+- [Get applicant data](https://docs.sumsub.com/reference/get-applicant-data)
+- [Get applicant data (externalUserId)](https://docs.sumsub.com/reference/get-applicant-data-via-externaluserid)
 
 Feel free to open an issue or PR if you need more endpoints.
 
