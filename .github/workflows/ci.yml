@@ -26,7 +26,7 @@ jobs:
       - name: Vendor modules
         run: go mod vendor
       - name: Run Linter
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v8
         with:
           version: v2.1.6
           args: --modules-download-mode vendor
