@@ -28,7 +28,7 @@ jobs:
       - name: Run Linter
         uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.63.4
+          version: v2.1.6
           args: --modules-download-mode vendor
       - name: Run Unit tests
         run: go test -v ./...

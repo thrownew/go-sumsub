@@ -1,22 +1,35 @@
+version: "2"
 run:
   concurrency: 1
   deadline: 1m
   issues-exit-code: 1
   tests: true
-
-output:
-  formats: colored-line-number
-  print-issued-lines: true
-  print-linter-name: true
-
-linters-settings:
-  govet:
-    shadow: enable-all
-  gofmt:
-    simplify: true
-  errcheck:
-    check-type-assertions: true
-  gocyclo:
-    min-complexity: 10
-  misspell:
-    locale: US
+linters:
+  settings:
+    errcheck:
+      check-type-assertions: true
+    gocyclo:
+      min-complexity: 10
+    misspell:
+      locale: US
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  settings:
+    gofmt:
+      simplify: true
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
