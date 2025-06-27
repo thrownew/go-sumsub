@@ -32,6 +32,6 @@ func (s *HashSigner) Sign(t time.Time, method, uri string, payload []byte) strin
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.hash.Reset()
-	_, _ = s.hash.Write([]byte(fmt.Sprintf("%d%s%s%s", t.Unix(), method, uri, string(payload))))
+	_, _ = s.hash.Write([]byte(fmt.Sprintf("%d%s%s%s", t.Unix(), method, uri, string(payload)))) //nolint:staticcheck
 	return strings.ToLower(hex.EncodeToString(s.hash.Sum(nil)))
 }

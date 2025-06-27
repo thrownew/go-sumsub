@@ -397,7 +397,7 @@ func (c *Client) GenerateAccessTokenSDK(ctx context.Context, req GenerateAccessT
 		return GenerateAccessTokenSDKResponse{}, fmt.Errorf("user id mismatch: `%s` not equal `%s`", resp.UserID, req.UserID)
 	}
 
-	//nolint: gosimple
+	//nolint: staticcheck
 	return GenerateAccessTokenSDKResponse{
 		Token:  resp.Token,
 		UserID: resp.UserID,
@@ -428,7 +428,7 @@ func (c *Client) GenerateExternalWebSDKLink(ctx context.Context, req GenerateExt
 		return GenerateExternalWebSDKLinkResponse{}, fmt.Errorf("invalid link: %w", err)
 	}
 
-	//nolint: gosimple
+	//nolint: staticcheck
 	return GenerateExternalWebSDKLinkResponse{
 		URL: resp.URL,
 	}, nil
