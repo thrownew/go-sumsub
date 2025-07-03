@@ -28,6 +28,7 @@ go get github.com/thrownew/go-sumsub
 - [Get applicant review status](https://docs.sumsub.com/reference/get-applicant-review-status)
 - [Get applicant data](https://docs.sumsub.com/reference/get-applicant-data)
 - [Get applicant data (externalUserId)](https://docs.sumsub.com/reference/get-applicant-data-via-externaluserid)
+- [Create applicant](https://docs.sumsub.com/reference/create-applicant)
 
 Feel free to open an issue or PR if you need more endpoints.
 

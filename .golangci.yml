@@ -12,6 +12,8 @@ linters:
       min-complexity: 10
     misspell:
       locale: US
+    staticcheck:
+      checks: ["all", "-S1016"]  # disable S1016: should convert type to another type
   exclusions:
     generated: lax
     presets:
