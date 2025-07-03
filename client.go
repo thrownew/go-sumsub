@@ -174,6 +174,7 @@ type (
 	}
 
 	CreateApplicantRequest struct {
+		LevelName      string
 		FixedInfo      FixedInfo
 		ExternalUserID string
 		Email          string
@@ -370,6 +371,7 @@ type (
 	}
 
 	reqCreateApplicant struct {
+		LevelName string `json:"levelName"`
 		FixedInfo struct {
 			FirstName string `json:"firstName"`
 			LastName  string `json:"lastName"`
@@ -605,7 +607,7 @@ func (c *Client) ApplicantData(ctx context.Context, req ApplicantDataRequest) (A
 func (c *Client) CreateApplicant(ctx context.Context, req CreateApplicantRequest) (CreateApplicantResponse, error) {
 	resp, err := call[reqCreateApplicant, respCreateApplicant](ctx, c,
 		http.MethodPost,
-		"/resources/applicants",
+		fmt.Sprintf("/resources/applicants?levelName=%s", req.LevelName),
 		reqCreateApplicant{
 			FixedInfo: struct {
 				FirstName string `json:"firstName"`
