@@ -173,9 +173,22 @@ type (
 		Type              string
 	}
 
+	CreateApplicantRequest struct {
+		FixedInfo      FixedInfo
+		ExternalUserID string
+		Email          *string
+		Phone          *string
+	}
+
+	CreateApplicantResponse struct {
+		// only returning the ID for now, get the complete applicant's data by calling `ApplicantData`
+		ID string
+	}
+
 	FixedInfo struct {
 		FirstName string
 		LastName  string
+		DOB       *time.Time
 	}
 
 	Info struct {
@@ -354,6 +367,21 @@ type (
 		} `json:"review"`
 		Lang string `json:"lang"`
 		Type string `json:"type"`
+	}
+
+	reqCreateApplicant struct {
+		FixedInfo struct {
+			FirstName string  `json:"firstName"`
+			LastName  string  `json:"lastName"`
+			Dob       *string `json:"dob"`
+		} `json:"fixedInfo"`
+		ExternalUserID string  `json:"externalUserId"`
+		Email          *string `json:"email"`
+		Phone          *string `json:"phone"`
+	}
+
+	respCreateApplicant struct {
+		ID string `json:"id"`
 	}
 )
 
@@ -569,6 +597,43 @@ func (c *Client) ApplicantData(ctx context.Context, req ApplicantDataRequest) (A
 		},
 		Lang: resp.Lang,
 		Type: resp.Type,
+	}, nil
+}
+
+// CreateApplicant Use this method to create an applicant on sumsub via API.
+// https://docs.sumsub.com/reference/create-applicant
+func (c *Client) CreateApplicant(ctx context.Context, req CreateApplicantRequest) (CreateApplicantResponse, error) {
+	var dateString string
+
+	if req.FixedInfo.DOB != nil {
+		dateString = req.FixedInfo.DOB.Format("2006-01-02")
+	}
+
+	resp, err := call[reqCreateApplicant, respCreateApplicant](ctx, c,
+		http.MethodPost,
+		"/resources/applicants",
+		reqCreateApplicant{
+			FixedInfo: struct {
+				FirstName string  `json:"firstName"`
+				LastName  string  `json:"lastName"`
+				Dob       *string `json:"dob"`
+			}{
+				FirstName: req.FixedInfo.FirstName,
+				LastName:  req.FixedInfo.LastName,
+				Dob:       &dateString,
+			},
+			ExternalUserID: req.ExternalUserID,
+			Email:          req.Email,
+			Phone:          req.Phone,
+		},
+	)
+
+	if err != nil {
+		return CreateApplicantResponse{}, fmt.Errorf("call: %w", err)
+	}
+
+	return CreateApplicantResponse{
+		ID: resp.ID,
 	}, nil
 }
 
