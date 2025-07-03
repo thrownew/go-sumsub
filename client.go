@@ -371,7 +371,6 @@ type (
 	}
 
 	reqCreateApplicant struct {
-		LevelName string `json:"levelName"`
 		FixedInfo struct {
 			FirstName string `json:"firstName"`
 			LastName  string `json:"lastName"`
