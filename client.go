@@ -604,14 +604,6 @@ func (c *Client) ApplicantData(ctx context.Context, req ApplicantDataRequest) (A
 // CreateApplicant Use this method to create an applicant on sumsub via API.
 // https://docs.sumsub.com/reference/create-applicant
 func (c *Client) CreateApplicant(ctx context.Context, req CreateApplicantRequest) (CreateApplicantResponse, error) {
-	var dateString string
-
-	if !req.FixedInfo.DOB.IsZero() {
-		dateString = req.FixedInfo.DOB.Format("2006-01-02")
-	} else {
-		dateString = ""
-	}
-
 	resp, err := call[reqCreateApplicant, respCreateApplicant](ctx, c,
 		http.MethodPost,
 		fmt.Sprintf("/resources/applicants?levelName=%s", req.LevelName),
@@ -623,7 +615,7 @@ func (c *Client) CreateApplicant(ctx context.Context, req CreateApplicantRequest
 			}{
 				FirstName: req.FixedInfo.FirstName,
 				LastName:  req.FixedInfo.LastName,
-				Dob:       dateString,
+				Dob:       requestTime(req.FixedInfo.DOB, "2006-01-02"),
 			},
 			ExternalUserID: req.ExternalUserID,
 			Email:          req.Email,
@@ -720,4 +712,11 @@ func AsAPIError(err error) (*APIError, bool) {
 		return nil, false
 	}
 	return e, true
+}
+
+func requestTime(t time.Time, format string) string {
+	if t.IsZero() {
+		return ""
+	}
+	return t.Format(format)
 }
