@@ -606,7 +606,7 @@ func (c *Client) ApplicantData(ctx context.Context, req ApplicantDataRequest) (A
 func (c *Client) CreateApplicant(ctx context.Context, req CreateApplicantRequest) (CreateApplicantResponse, error) {
 	resp, err := call[reqCreateApplicant, respCreateApplicant](ctx, c,
 		http.MethodPost,
-		fmt.Sprintf("/resources/applicants?levelName=%s", req.LevelName),
+		fmt.Sprintf("/resources/applicants?levelName=%s", url.QueryEscape(req.LevelName)),
 		reqCreateApplicant{
 			FixedInfo: struct {
 				FirstName string `json:"firstName"`
