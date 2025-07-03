@@ -176,8 +176,8 @@ type (
 	CreateApplicantRequest struct {
 		FixedInfo      FixedInfo
 		ExternalUserID string
-		Email          *string
-		Phone          *string
+		Email          string
+		Phone          string
 	}
 
 	CreateApplicantResponse struct {
@@ -188,7 +188,7 @@ type (
 	FixedInfo struct {
 		FirstName string
 		LastName  string
-		DOB       *time.Time
+		DOB       time.Time
 	}
 
 	Info struct {
@@ -371,13 +371,13 @@ type (
 
 	reqCreateApplicant struct {
 		FixedInfo struct {
-			FirstName string  `json:"firstName"`
-			LastName  string  `json:"lastName"`
-			Dob       *string `json:"dob"`
+			FirstName string `json:"firstName"`
+			LastName  string `json:"lastName"`
+			Dob       string `json:"dob,omitempty"`
 		} `json:"fixedInfo"`
-		ExternalUserID string  `json:"externalUserId"`
-		Email          *string `json:"email"`
-		Phone          *string `json:"phone"`
+		ExternalUserID string `json:"externalUserId"`
+		Email          string `json:"email,omitempty"`
+		Phone          string `json:"phone,omitempty"`
 	}
 
 	respCreateApplicant struct {
@@ -605,8 +605,10 @@ func (c *Client) ApplicantData(ctx context.Context, req ApplicantDataRequest) (A
 func (c *Client) CreateApplicant(ctx context.Context, req CreateApplicantRequest) (CreateApplicantResponse, error) {
 	var dateString string
 
-	if req.FixedInfo.DOB != nil {
+	if !req.FixedInfo.DOB.IsZero() {
 		dateString = req.FixedInfo.DOB.Format("2006-01-02")
+	} else {
+		dateString = ""
 	}
 
 	resp, err := call[reqCreateApplicant, respCreateApplicant](ctx, c,
@@ -614,13 +616,13 @@ func (c *Client) CreateApplicant(ctx context.Context, req CreateApplicantRequest
 		"/resources/applicants",
 		reqCreateApplicant{
 			FixedInfo: struct {
-				FirstName string  `json:"firstName"`
-				LastName  string  `json:"lastName"`
-				Dob       *string `json:"dob"`
+				FirstName string `json:"firstName"`
+				LastName  string `json:"lastName"`
+				Dob       string `json:"dob,omitempty"`
 			}{
 				FirstName: req.FixedInfo.FirstName,
 				LastName:  req.FixedInfo.LastName,
-				Dob:       &dateString,
+				Dob:       dateString,
 			},
 			ExternalUserID: req.ExternalUserID,
 			Email:          req.Email,
