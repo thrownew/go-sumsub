@@ -174,11 +174,15 @@ type (
 	}
 
 	CreateApplicantRequest struct {
-		LevelName      string
-		FixedInfo      FixedInfo
-		ExternalUserID string
-		Email          string
-		Phone          string
+		LevelName        string
+		SourceKey        string
+		FixedInfo        FixedInfo
+		ExternalUserID   string
+		Email            string
+		Phone            string
+		Lang             string
+		Type             string
+		RegistrationDate time.Time
 	}
 
 	CreateApplicantResponse struct {
@@ -376,9 +380,13 @@ type (
 			LastName  string `json:"lastName"`
 			Dob       string `json:"dob,omitempty"`
 		} `json:"fixedInfo"`
-		ExternalUserID string `json:"externalUserId"`
-		Email          string `json:"email,omitempty"`
-		Phone          string `json:"phone,omitempty"`
+		ExternalUserID   string  `json:"externalUserId"`
+		Email            string  `json:"email,omitempty"`
+		Phone            string  `json:"phone,omitempty"`
+		SourceKey        string  `json:"sourceKey,omitempty"`
+		Lang             string  `json:"lang,omitempty"`
+		Type             string  `json:"type,omitempty"`
+		RegistrationDate string `json:"registrationDate"`
 	}
 
 	respCreateApplicant struct {
@@ -617,9 +625,13 @@ func (c *Client) CreateApplicant(ctx context.Context, req CreateApplicantRequest
 				LastName:  req.FixedInfo.LastName,
 				Dob:       requestTime(req.FixedInfo.DOB, "2006-01-02"),
 			},
-			ExternalUserID: req.ExternalUserID,
-			Email:          req.Email,
-			Phone:          req.Phone,
+			ExternalUserID:   req.ExternalUserID,
+			Email:            req.Email,
+			Phone:            req.Phone,
+			SourceKey:        req.SourceKey,
+			Lang:             req.Lang,
+			Type:             req.Type,
+			RegistrationDate: requestTime(req.RegistrationDate, "2006-01-02 15:04:05"),
 		},
 	)
 
