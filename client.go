@@ -380,13 +380,13 @@ type (
 			LastName  string `json:"lastName"`
 			Dob       string `json:"dob,omitempty"`
 		} `json:"fixedInfo"`
-		ExternalUserID   string  `json:"externalUserId"`
-		Email            string  `json:"email,omitempty"`
-		Phone            string  `json:"phone,omitempty"`
-		SourceKey        string  `json:"sourceKey,omitempty"`
-		Lang             string  `json:"lang,omitempty"`
-		Type             string  `json:"type,omitempty"`
-		RegistrationDate string `json:"registrationDate"`
+		ExternalUserID   string `json:"externalUserId"`
+		Email            string `json:"email,omitempty"`
+		Phone            string `json:"phone,omitempty"`
+		SourceKey        string `json:"sourceKey,omitempty"`
+		Lang             string `json:"lang,omitempty"`
+		Type             string `json:"type,omitempty"`
+		RegistrationDate string `json:"registrationDate,omitempty"`
 	}
 
 	respCreateApplicant struct {
